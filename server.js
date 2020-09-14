@@ -19,13 +19,13 @@ const mc = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
 // Clear on first load
 //mc.delete('data.json');
 
-// We will use Express 
+// We will use Express
 var app = express();
 
 // maybe a last_update call?
-app.get('/api/tags.json', (req, res ) => {
-  mc.get("tags.json" , (err, val) => { 
-    if(err == null && val != null && typeof req.query.nocache === 'undefined' ){ 
+app.get('/api/tags.json', (req, res) => {
+  mc.get("tags.json" , (err, val) => {
+    if(err == null && val != null && typeof req.query.nocache === 'undefined' ){
       res.write(val)
       res.end()
     }else{
@@ -37,8 +37,8 @@ app.get('/api/tags.json', (req, res ) => {
 
 app.get('/api/data.json', (req, res ) => {
   const k = 'data.json';
-  mc.get(k , (err, val) => { 
-    if(err == null && val != null && typeof req.query.nocache === 'undefined' ){ 
+  mc.get(k , (err, val) => {
+    if(err == null && val != null && typeof req.query.nocache === 'undefined' ){
       res.write(val)
       res.end()
       console.log("loaded from memcacehd");
@@ -50,18 +50,18 @@ app.get('/api/data.json', (req, res ) => {
     }else{
       console.log("retrieving new copy");
       getProjectIndex(["Brigade", "Code for America"]).then( result => {
-        const cache_value = JSON.stringify(result); 
+        const cache_value = JSON.stringify(result);
         mc.set(k, cache_value , {expires: 360*3}, function(err, val){/* handle error */});
 
         /* // uncomment to store gzipped and bson'd - takes more memory
-        const cache_value = bson.serialize({"brigades":result}); 
+        const cache_value = bson.serialize({"brigades":result});
         gzip( cache_value ).then( (zcache_value) => {
           mc.set(k, zcache_value , {expires: 360}, function(err, val){ console.log(err) });
         })
         */
 
         res.json(result);
-      }) 
+      })
     }
   });
 });
@@ -81,4 +81,6 @@ if(process.env.REDIRECT_TO_DOMAIN != undefined){ // If we are in heroku environm
 
 app.use(express.static(__dirname + '/dist'));
 
-app.listen(port);
+const server = app.listen(port, () => {
+  console.log('Server listening at http://localhost:%s', port);
+});

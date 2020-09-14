@@ -27,7 +27,7 @@ export function getProjectIndex(org_type){
             owner:'codeforamerica',
             repo:'brigade-project-index',
             archive_format:'zipball',
-            ref:'index/v1'  
+            ref:'index/v1'
         }).then( (response) => {
             // Download the latest brigade index in a zip archive
             const index_zip = new JSZip();
